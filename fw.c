@@ -1427,10 +1427,18 @@ static int rtw89_fw_h2c_add_general_pkt(struct rtw89_dev *rtwdev,
 		skb = ieee80211_proberesp_get(rtwdev->hw, vif);
 		break;
 	case RTW89_PKT_OFLD_TYPE_NULL_DATA:
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
 		skb = ieee80211_nullfunc_get(rtwdev->hw, vif, -1, false);
+#else
+		skb = ieee80211_nullfunc_get(rtwdev->hw, vif, false);
+#endif
 		break;
 	case RTW89_PKT_OFLD_TYPE_QOS_NULL:
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 1, 0)
 		skb = ieee80211_nullfunc_get(rtwdev->hw, vif, -1, true);
+#else
+		skb = ieee80211_nullfunc_get(rtwdev->hw, vif, true);
+#endif
 		break;
 	default:
 		goto err;
