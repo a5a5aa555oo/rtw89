@@ -1,7 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
 
-obj-$(CONFIG_RTW89_CORE) += rtw89_core.o
-rtw89_core-y += core.o \
+ifneq ($(KERNELRELEASE),)
+
+obj-m += rtw89.o
+rtw89-y +=	core.o \
 		mac80211.o \
 		mac.o \
 		phy.o \
@@ -14,48 +16,68 @@ rtw89_core-y += core.o \
 		ps.o \
 		chan.o \
 		ser.o \
-		acpi.o
+		acpi.o \
+		pci.o \
+		debug.o
 
-rtw89_core-$(CONFIG_PM) += wow.o
+rtw89-$(CONFIG_PM) += wow.o
 
-obj-$(CONFIG_RTW89_8851B) += rtw89_8851b.o
-rtw89_8851b-objs := rtw8851b.o \
-		    rtw8851b_table.o \
-		    rtw8851b_rfk.o \
-		    rtw8851b_rfk_table.o
+obj-m += rtw_8851b.o
+rtw_8851b-objs := rtw8851b.o \
+		  rtw8851b_table.o \
+		  rtw8851b_rfk.o \
+		  rtw8851b_rfk_table.o
 
-obj-$(CONFIG_RTW89_8851BE) += rtw89_8851be.o
-rtw89_8851be-objs := rtw8851be.o
+obj-m += rtw_8851be.o
+rtw_8851be-objs := rtw8851be.o
 
-obj-$(CONFIG_RTW89_8852A) += rtw89_8852a.o
-rtw89_8852a-objs := rtw8852a.o \
-		    rtw8852a_table.o \
-		    rtw8852a_rfk.o \
-		    rtw8852a_rfk_table.o
+obj-m += rtw_8852a.o
+rtw_8852a-objs := rtw8852a.o \
+		  rtw8852a_table.o \
+		  rtw8852a_rfk.o \
+		  rtw8852a_rfk_table.o
 
-obj-$(CONFIG_RTW89_8852AE) += rtw89_8852ae.o
-rtw89_8852ae-objs := rtw8852ae.o
+obj-m += rtw_8852ae.o
+rtw_8852ae-objs := rtw8852ae.o
 
-obj-$(CONFIG_RTW89_8852B) += rtw89_8852b.o
-rtw89_8852b-objs := rtw8852b.o \
-		    rtw8852b_table.o \
-		    rtw8852b_rfk.o \
-		    rtw8852b_rfk_table.o
+obj-m += rtw_8852b.o
+rtw_8852b-objs := rtw8852b.o \
+		  rtw8852b_table.o \
+		  rtw8852b_rfk.o \
+		  rtw8852b_rfk_table.o
 
-obj-$(CONFIG_RTW89_8852BE) += rtw89_8852be.o
-rtw89_8852be-objs := rtw8852be.o
+obj-m += rtw_8852be.o
+rtw_8852be-objs := rtw8852be.o
 
-obj-$(CONFIG_RTW89_8852C) += rtw89_8852c.o
-rtw89_8852c-objs := rtw8852c.o \
-		    rtw8852c_table.o \
-		    rtw8852c_rfk.o \
-		    rtw8852c_rfk_table.o
+obj-m += rtw_8852c.o
+rtw_8852c-objs := rtw8852c.o \
+		  rtw8852c_table.o \
+		  rtw8852c_rfk.o \
+		  rtw8852c_rfk_table.o
 
-obj-$(CONFIG_RTW89_8852CE) += rtw89_8852ce.o
-rtw89_8852ce-objs := rtw8852ce.o
+obj-m += rtw_8852ce.o
+rtw_8852ce-objs := rtw8852ce.o
 
-rtw89_core-$(CONFIG_RTW89_DEBUG) += debug.o
+else
 
-obj-$(CONFIG_RTW89_PCI) += rtw89_pci.o
-rtw89_pci-y := pci.o
+KVER ?= `uname -r`
+KDIR ?= /lib/modules/$(KVER)/build
+MODDIR ?= /lib/modules/$(KVER)/extra/rtw89
 
+modules:
+	$(MAKE) -j`nproc` -C $(KDIR) M=$$PWD modules
+
+clean:
+	$(MAKE) -C $(KDIR) M=$$PWD clean
+
+install:
+	@strip -g *.ko
+	@install -Dvm 644 -t $(MODDIR) *.ko
+	depmod -a $(KVER)
+
+uninstall:
+	@rm -rvf $(MODDIR)
+	@rmdir -v --ignore-fail-on-non-empty /lib/modules/$(KVER)/extra || true
+	depmod -a $(KVER)
+
+endif
