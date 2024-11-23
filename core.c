@@ -1546,7 +1546,11 @@ static void rtw89_stats_trigger_frame(struct rtw89_dev *rtwdev,
 		if (aid == RTW89_TF_PAD)
 			break;
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
 		if (aid == vif->cfg.aid) {
+#else
+		if (aid == vif->bss_conf.aid) {
+#endif
 			rtwvif->stats.rx_tf_acc++;
 			rtwdev->stats.rx_tf_acc++;
 			break;
@@ -2442,7 +2446,11 @@ static int rtw89_core_send_nullfunc(struct rtw89_dev *rtwdev,
 	struct sk_buff *skb;
 	int ret, qsel;
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
 	if (vif->type != NL80211_IFTYPE_STATION || !vif->cfg.assoc)
+#else
+	if (vif->type != NL80211_IFTYPE_STATION || !vif->bss_conf.assoc)
+#endif
 		return 0;
 
 	rcu_read_lock();

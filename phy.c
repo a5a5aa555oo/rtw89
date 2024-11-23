@@ -2944,7 +2944,11 @@ void rtw89_phy_ul_tb_ctrl_check(struct rtw89_dev *rtwdev,
 	if (rtwvif->wifi_role != RTW89_WIFI_ROLE_STATION)
 		return;
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
 	if (!vif->cfg.assoc)
+#else
+	if (!vif->bss_conf.assoc)
+#endif
 		return;
 
 	if (stats->rx_tf_periodic > UL_TB_TF_CNT_L2H_TH)
@@ -4508,7 +4512,11 @@ void rtw89_phy_set_bss_color(struct rtw89_dev *rtwdev, struct ieee80211_vif *vif
 	enum rtw89_phy_idx phy_idx = RTW89_PHY_0;
 	u8 bss_color;
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
 	if (!vif->bss_conf.he_support || !vif->cfg.assoc)
+#else
+	if (!vif->bss_conf.he_support || !vif->bss_conf.assoc)	
+#endif
 		return;
 
 	bss_color = vif->bss_conf.he_bss_color.color;
@@ -4518,7 +4526,11 @@ void rtw89_phy_set_bss_color(struct rtw89_dev *rtwdev, struct ieee80211_vif *vif
 	rtw89_phy_write32_idx(rtwdev, chip->bss_clr_map_reg, B_BSS_CLR_MAP_TGT,
 			      bss_color, phy_idx);
 	rtw89_phy_write32_idx(rtwdev, chip->bss_clr_map_reg, B_BSS_CLR_MAP_STAID,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
 			      vif->cfg.aid, phy_idx);
+#else
+			      vif->bss_conf.aid, phy_idx);
+#endif
 }
 
 static void

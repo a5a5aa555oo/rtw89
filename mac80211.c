@@ -402,7 +402,11 @@ static void rtw89_station_mode_sta_assoc(struct rtw89_dev *rtwdev,
 static void rtw89_ops_bss_info_changed(struct ieee80211_hw *hw,
 				       struct ieee80211_vif *vif,
 				       struct ieee80211_bss_conf *conf,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
 				       u64 changed)
+#else
+				       u32 changed)
+#endif
 {
 	struct rtw89_dev *rtwdev = hw->priv;
 	struct rtw89_vif *rtwvif = (struct rtw89_vif *)vif->drv_priv;
@@ -411,7 +415,11 @@ static void rtw89_ops_bss_info_changed(struct ieee80211_hw *hw,
 	rtw89_leave_ps_mode(rtwdev);
 
 	if (changed & BSS_CHANGED_ASSOC) {
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
 		if (vif->cfg.assoc) {
+#else
+		if (conf->assoc) {
+#endif
 			rtw89_station_mode_sta_assoc(rtwdev, vif, conf);
 			rtw89_phy_set_bss_color(rtwdev, vif);
 			rtw89_chip_cfg_txpwr_ul_tb_offset(rtwdev, vif);
@@ -459,8 +467,12 @@ static void rtw89_ops_bss_info_changed(struct ieee80211_hw *hw,
 }
 
 static int rtw89_ops_start_ap(struct ieee80211_hw *hw,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
 			      struct ieee80211_vif *vif,
 			      struct ieee80211_bss_conf *link_conf)
+#else
+			      struct ieee80211_vif *vif)
+#endif
 {
 	struct rtw89_dev *rtwdev = hw->priv;
 	struct rtw89_vif *rtwvif = (struct rtw89_vif *)vif->drv_priv;
@@ -493,8 +505,12 @@ static int rtw89_ops_start_ap(struct ieee80211_hw *hw,
 }
 
 static
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
 void rtw89_ops_stop_ap(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
 		       struct ieee80211_bss_conf *link_conf)
+#else
+void rtw89_ops_stop_ap(struct ieee80211_hw *hw, struct ieee80211_vif *vif)
+#endif
 {
 	struct rtw89_dev *rtwdev = hw->priv;
 	struct rtw89_vif *rtwvif = (struct rtw89_vif *)vif->drv_priv;
@@ -518,10 +534,16 @@ static int rtw89_ops_set_tim(struct ieee80211_hw *hw, struct ieee80211_sta *sta,
 	return 0;
 }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
 static int rtw89_ops_conf_tx(struct ieee80211_hw *hw,
 			     struct ieee80211_vif *vif,
 			     unsigned int link_id, u16 ac,
 			     const struct ieee80211_tx_queue_params *params)
+#else
+static int rtw89_ops_conf_tx(struct ieee80211_hw *hw,
+			     struct ieee80211_vif *vif, u16 ac,
+			     const struct ieee80211_tx_queue_params *params)
+#endif
 {
 	struct rtw89_dev *rtwdev = hw->priv;
 	struct rtw89_vif *rtwvif = (struct rtw89_vif *)vif->drv_priv;
@@ -925,7 +947,9 @@ static void rtw89_ops_change_chanctx(struct ieee80211_hw *hw,
 
 static int rtw89_ops_assign_vif_chanctx(struct ieee80211_hw *hw,
 					struct ieee80211_vif *vif,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
 					struct ieee80211_bss_conf *link_conf,
+#endif
 					struct ieee80211_chanctx_conf *ctx)
 {
 	struct rtw89_dev *rtwdev = hw->priv;
@@ -941,7 +965,9 @@ static int rtw89_ops_assign_vif_chanctx(struct ieee80211_hw *hw,
 
 static void rtw89_ops_unassign_vif_chanctx(struct ieee80211_hw *hw,
 					   struct ieee80211_vif *vif,
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
 					   struct ieee80211_bss_conf *link_conf,
+#endif
 					   struct ieee80211_chanctx_conf *ctx)
 {
 	struct rtw89_dev *rtwdev = hw->priv;

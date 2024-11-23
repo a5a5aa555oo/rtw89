@@ -20,6 +20,40 @@ struct rtw89_phy_gen_def;
 
 extern const struct ieee80211_ops rtw89_ops;
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 0, 0)
+/* trigger type within common_info of trigger frame */
+#define IEEE80211_TRIGGER_TYPE_MASK		0xf
+#define IEEE80211_TRIGGER_TYPE_BASIC		0x0
+#define IEEE80211_TRIGGER_TYPE_BFRP		0x1
+#define IEEE80211_TRIGGER_TYPE_MU_BAR		0x2
+#define IEEE80211_TRIGGER_TYPE_MU_RTS		0x3
+#define IEEE80211_TRIGGER_TYPE_BSRP		0x4
+#define IEEE80211_TRIGGER_TYPE_GCR_MU_BAR	0x5
+#define IEEE80211_TRIGGER_TYPE_BQRP		0x6
+#define IEEE80211_TRIGGER_TYPE_NFRP		0x7
+
+#define IEEE80211_STYPE_TRIGGER		0x0020
+
+struct ieee80211_trigger {
+	__le16 frame_control;
+	__le16 duration;
+	u8 ra[ETH_ALEN];
+	u8 ta[ETH_ALEN];
+	__le64 common_info;
+	u8 variable[];
+} __packed __aligned(2);
+
+/**
+ * ieee80211_is_trigger - check if frame is trigger frame
+ * @fc: frame control field in little-endian byteorder
+ */
+static inline bool ieee80211_is_trigger(__le16 fc)
+{
+	return (fc & cpu_to_le16(IEEE80211_FCTL_FTYPE | IEEE80211_FCTL_STYPE)) ==
+	       cpu_to_le16(IEEE80211_FTYPE_CTL | IEEE80211_STYPE_TRIGGER);
+}
+#endif
+
 #define MASKBYTE0 0xff
 #define MASKBYTE1 0xff00
 #define MASKBYTE2 0xff0000
@@ -5131,7 +5165,11 @@ void rtw89_chip_cfg_txpwr_ul_tb_offset(struct rtw89_dev *rtwdev,
 	struct rtw89_vif *rtwvif = (struct rtw89_vif *)vif->drv_priv;
 	const struct rtw89_chip_info *chip = rtwdev->chip;
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 0, 0)
 	if (!vif->bss_conf.he_support || !vif->cfg.assoc)
+#else
+	if (!vif->bss_conf.he_support || !vif->bss_conf.assoc)
+#endif
 		return;
 
 	if (chip->ops->set_txpwr_ul_tb_offset)
