@@ -5694,6 +5694,7 @@ void rtw89_btc_ntfy_role_info(struct rtw89_dev *rtwdev, struct rtw89_vif *rtwvif
 		rtw89_debug(rtwdev, RTW89_DBG_BTC, "[BTC], STA mac_id=%d\n",
 			    rtwsta->mac_id);
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 19, 0)
 		rtw89_debug(rtwdev, RTW89_DBG_BTC,
 			    "[BTC], STA support HE=%d VHT=%d HT=%d\n",
 			    sta->deflink.he_cap.has_he,
@@ -5705,6 +5706,19 @@ void rtw89_btc_ntfy_role_info(struct rtw89_dev *rtwdev, struct rtw89_vif *rtwvif
 			mode |= BIT(BTC_WL_MODE_VHT);
 		if (sta->deflink.ht_cap.ht_supported)
 			mode |= BIT(BTC_WL_MODE_HT);
+#else
+		rtw89_debug(rtwdev, RTW89_DBG_BTC,
+			    "[BTC], STA support HE=%d VHT=%d HT=%d\n",
+			    sta->he_cap.has_he,
+			    sta->vht_cap.vht_supported,
+			    sta->ht_cap.ht_supported);
+		if (sta->he_cap.has_he)
+			mode |= BIT(BTC_WL_MODE_HE);
+		if (sta->vht_cap.vht_supported)
+			mode |= BIT(BTC_WL_MODE_VHT);
+		if (sta->ht_cap.ht_supported)
+			mode |= BIT(BTC_WL_MODE_HT);
+#endif
 
 		r.mode = mode;
 	}
