@@ -507,10 +507,13 @@ static void __rtw89_reg_6ghz_power_recalc(struct rtw89_dev *rtwdev)
 void rtw89_reg_6ghz_power_recalc(struct rtw89_dev *rtwdev,
 				 struct rtw89_vif *rtwvif, bool active)
 {
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 16, 0)
 	struct ieee80211_vif *vif = rtwvif_to_vif(rtwvif);
+#endif
 
 	lockdep_assert_held(&rtwdev->mutex);
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 16, 0)
 	if (active) {
 		switch (vif->bss_conf.power_type) {
 		case IEEE80211_REG_VLP_AP:
@@ -529,6 +532,9 @@ void rtw89_reg_6ghz_power_recalc(struct rtw89_dev *rtwdev,
 	} else {
 		rtwvif->reg_6ghz_power = RTW89_REG_6GHZ_POWER_DFLT;
 	}
+#else
+	rtwvif->reg_6ghz_power = RTW89_REG_6GHZ_POWER_DFLT;
+#endif
 
 	__rtw89_reg_6ghz_power_recalc(rtwdev);
 }
