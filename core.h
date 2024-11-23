@@ -20,6 +20,10 @@ struct rtw89_phy_gen_def;
 
 extern const struct ieee80211_ops rtw89_ops;
 
+#if LINUX_VERSION_CODE < KERNEL_VERSION(5, 18, 0)
+#define RATE_INFO_BW_320 7
+#endif
+
 #if LINUX_VERSION_CODE < KERNEL_VERSION(6, 0, 0)
 /* trigger type within common_info of trigger frame */
 #define IEEE80211_TRIGGER_TYPE_MASK		0xf
