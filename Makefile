@@ -63,6 +63,7 @@ else
 KVER ?= `uname -r`
 KDIR ?= /lib/modules/$(KVER)/build
 MODDIR ?= /lib/modules/$(KVER)/extra/rtw89
+FWDIR := /lib/firmware/rtw89
 
 modules:
 	$(MAKE) -j`nproc` -C $(KDIR) M=$$PWD modules
@@ -75,6 +76,9 @@ install:
 	@install -Dvm 644 -t $(MODDIR) *.ko
 	@install -Dvm 644 -t /etc/modprobe.d blacklist-rtw89.conf
 	depmod -a $(KVER)
+
+install_fw:
+	@install -Dvm 644 -t $(FWDIR) firmware/*.bin
 
 uninstall:
 	@rm -rvf $(MODDIR)
