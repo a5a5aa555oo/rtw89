@@ -78,7 +78,22 @@ install:
 	depmod -a $(KVER)
 
 install_fw:
+ifeq ($(wildcard $(FWDIR)), )
 	@install -Dvm 644 -t $(FWDIR) firmware/*.bin
+else
+	@cp -r firmware tmp
+ifneq ($(wildcard $(FWDIR)/*.zst), )
+	@zstd -fq --rm tmp/*.bin
+endif
+ifneq ($(wildcard $(FWDIR)/*.xz), )
+	@xz -f -C crc32 tmp/*.bin
+endif
+ifneq ($(wildcard $(FWDIR)/*.gz), )
+	@gzip -f tmp/*.bin
+endif
+	@install -Dvm 644 -t $(FWDIR) tmp/rtw*
+	@rm -rf tmp
+endif
 
 uninstall:
 	@rm -rvf $(MODDIR)
