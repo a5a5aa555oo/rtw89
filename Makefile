@@ -65,13 +65,21 @@ KDIR ?= /lib/modules/$(KVER)/build
 MODDIR ?= /lib/modules/$(KVER)/extra/rtw89
 FWDIR := /lib/firmware/rtw89
 
+.PHONY: modules clean cleanup install install_fw uninstall
+
 modules:
 	$(MAKE) -j`nproc` -C $(KDIR) M=$$PWD modules
 
 clean:
 	$(MAKE) -C $(KDIR) M=$$PWD clean
 
-install:
+cleanup:
+	rm -f /lib/modules/$(KVER)/kernel/drivers/net/wireless/realtek/rtw89/rtw89core*
+	rm -f /lib/modules/$(KVER)/kernel/drivers/net/wireless/realtek/rtw89/rtw89pci*
+	rm -f /lib/modules/$(KVER)/kernel/drivers/net/wireless/realtek/rtw89/rtw_*
+	rm -rf /lib/modules/$(KVER)/kernel/drivers/net/wireless/rtw89
+
+install: cleanup
 	@strip -g *.ko
 	@install -Dvm 644 -t $(MODDIR) *.ko
 	@install -Dvm 644 -t /etc/modprobe.d blacklist-rtw89.conf
