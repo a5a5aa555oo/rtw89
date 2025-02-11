@@ -22,6 +22,4 @@ sudo make install_fw
 ### Note
 **ONLY** kernel 5.15 ~ 6.6 are supported. For kernel 6.6+ users, use the rtw89 driver in [main branch](https://github.com/a5a5aa555oo/rtw89) instead.
 
- Please see [README.md](https://github.com/lwfinger/rtw89/blob/main/README.md) for more details.
-
-
+If your system has [Larry's rtw89 driver](https://github.com/lwfinger/rtw89) installed, you must remove it completely before trying this driver, or the driver probably won't work correctly.
