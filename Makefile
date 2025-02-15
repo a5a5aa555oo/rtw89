@@ -64,11 +64,12 @@ KVER ?= `uname -r`
 KDIR ?= /lib/modules/$(KVER)/build
 MODDIR ?= /lib/modules/$(KVER)/extra/rtw89
 FWDIR := /lib/firmware/rtw89
+NPROC ?= `nproc --ignore=1`
 
 .PHONY: modules clean cleanup_target_system install install_fw uninstall
 
 modules:
-	$(MAKE) -j`nproc` -C $(KDIR) M=$$PWD modules
+	$(MAKE) -j$(NPROC) -C $(KDIR) M=$$PWD modules
 
 clean:
 	$(MAKE) -C $(KDIR) M=$$PWD clean
