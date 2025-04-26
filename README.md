@@ -45,4 +45,4 @@ git, make, gcc, kernel-headers, dkms and mokutil (dkms and mokutil are optional.
 
 **ONLY** kernel 5.15 ~ 6.5 are supported. For kernel 6.6+ users, use the rtw89 driver in [main branch](https://github.com/a5a5aa555oo/rtw89) instead.
 
-Tested with RTL8852BE on Arch Linux (kernel version: 5.15.178-1-lts515 / 6.1.123-1-lts61) and it works.
+Tested with RTL8852BE on Arch Linux (kernel version: 5.15.180-1-lts515 / 6.1.130-1-lts61) and it works.
