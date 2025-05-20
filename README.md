@@ -47,8 +47,13 @@ git, make, gcc, kernel-headers, dkms and mokutil (dkms and mokutil are optional.
    sudo make install_fw
    ```
 
+6. Copy the configuration file `rtw89.conf` to /etc/modprobe.d/
 
-6. Enroll the MOK (Machine Owner Key). This is needed **ONLY IF** [Secure Boot](https://wiki.debian.org/SecureBoot) is enabled on your system. Please see [this guide]() on Internet for details.
+   ```
+   sudo cp -v rtw89.conf /etc/modprobe.d/
+   ```
+
+7. Enroll the MOK (Machine Owner Key). This is needed **ONLY IF** [Secure Boot](https://wiki.debian.org/SecureBoot) is enabled on your system. Please see [this guide](https://github.com/dell/dkms?tab=readme-ov-file#secure-boot) on Internet for details.
 
    ```
    sudo mokutil --import /var/lib/dkms/mok.pub
