@@ -145,3 +145,16 @@ This `rtw89` driver is the **Wi-Fi** driver for Realtek Wi-Fi 6/6E adapters and 
       ```
       make clean modules && sudo make install
       ```
+
+### Q4. How to update the firmware in my system?
+
+   1. Run this command in the rtw89 source directory to pull the latest code and firmware
+      ```
+      git pull
+      ```
+
+   2. Update the firmware files in your system
+      ```
+      sudo make install_fw
+      ```
+
